@@ -1,24 +1,36 @@
-import React from 'react';
-import logo from './logo.svg';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import './App.css';
+import Form from './components/Form';
+import Weather from './components/Weather';
+import { updatePrefecture, fetchData } from './redux/actions/actions';
+import { State } from './redux/store/initialState';
 
 function App() {
+  const weather = useSelector((state: State) => (state.search))
+  const dispatch = useDispatch()
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    dispatch(updatePrefecture(e.target.value))
+    e.preventDefault()
+  }
+  
+  useEffect(() => {
+    dispatch(fetchData())
+  }, [dispatch])
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h3 className="h3">WEATHER APP</h3>
+      <Form getWeather={() => {dispatch(fetchData())}}  onChange={onChange} />
+      <Weather
+        pref={weather.pref}
+        temperature={weather.temperature}
+        description={weather.description}
+        error={weather.error}
+      />
+      {console.log(weather.data)}
+      {console.log(weather.pref)}
     </div>
   );
 }
